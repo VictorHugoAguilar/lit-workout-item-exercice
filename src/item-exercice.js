@@ -31,6 +31,13 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
         type: String,
         attribute: 'name-exercice'
       },
+      noteExercicie: {
+        type: String,
+        attribute: 'note-exercice'
+      },
+      _openNote: {
+        type: Boolean,
+      },
       _showModalInfo: {
         type: Boolean,
       }
@@ -40,6 +47,8 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
   constructor() {
     super();
     this.nameExercice = '';
+    this._openNote = true;
+    this.noteExercicie = 'Este ejercicio se hace en maquina';
     this._showModalInfo = false;
   }
 
@@ -92,8 +101,6 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       }
 
       .header-note {
-        background-color: rgba(82, 255,51, 0.3);
-        border-bottom: 2px solid rgba(82, 255,51, 1);
         padding: 0.3rem;
         display: flex;
         flex-direction: row;
@@ -101,9 +108,36 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
         align-items: center
       }
 
+      .header-note-open {
+        border-bottom: 2px solid rgba(75, 75, 75, 1);
+      }
+
+      .header-note-close {
+        background-color: rgba(82, 255,51, 0.3);
+        border-bottom: 2px solid rgba(82, 255,51, 1);
+      }
+      
       .header-note-description{
         color: rgba(82, 255,51, 0.8);
         font-size: 0.8rem;
+        width: 90%;
+      }
+
+      .header-note-description-input{
+        width: 100%;
+        color: rgba(82, 255,51, 0.8);
+        background-color: transparent;
+        border: none;
+      }
+
+      .header-note-description-input:active {
+        border: none;
+        outline: none;
+      }
+
+      .header-note-description-input:focus {
+        border: none;
+        outline: none;
       }
 
       .header-note-option {
@@ -207,9 +241,11 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
             <span class="button-info">...</span>
           </div>
         </div>
-        <div class="header-note">
-          <span class="header-note-description">Este ejercicio se hace en maquina</span>
-          <span class="header-note-option">🔐</span>
+        <div class="header-note header-note-open ${ this._styleIconnote}">
+          <span class="header-note-description">
+            <input type="text" class="header-note-description-input" value=${this.noteExercicie} />
+          </span>
+          <span class="header-note-option" @click=${ () => this._openNote = !this._openNote} > ${ this._tmplIconNote } </span>
         </div>
         <div class="body">
           <table class="table">
@@ -265,6 +301,15 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
 
   _openModal(modalName) {
     this._showModalInfo = true;
+  }
+
+  get _tmplIconNote() {
+    return this._openNote ? html `<span>🔓</span>` : html `<span>🔐</span>`
+  }
+
+  get _styleIconnote() {
+    return this._openNote ? 'header-note-open' : 'header-note-close';
+
   }
 
 
