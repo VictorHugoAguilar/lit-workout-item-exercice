@@ -25,24 +25,6 @@ class ModalInfo extends EventMixin(LitElement) {
         type: String,
         attribute: 'component-name'
       },
-      // Start By independient properties
-      totalVolume: {
-        type: String,
-        attribute: 'total-volume'
-      },
-      bulkingUp: {
-        type: String,
-        attribute: 'bulkin-up'
-      },
-      totalRepetitions: {
-        type: String,
-        attribute: 'total-repetitions'
-      },
-      weightPerRepetition: {
-        type: String,
-        attribute: 'weight-repetitions'
-      },
-      // End By independient properties
       options: {
         type: Object,
         attribute: 'list-options'
@@ -60,12 +42,6 @@ class ModalInfo extends EventMixin(LitElement) {
 
   constructor() {
     super();
-    // Start By independient properties
-    this.totalVolume = '';
-    this.bulkingUp = '';
-    this.totalRepetitions = '';
-    this.weightPerRepetition = '';
-    // End By independient properties
     this.itemSelected = 'totalVolume';
     this.options = {
       totalVolume: {
@@ -223,23 +199,6 @@ class ModalInfo extends EventMixin(LitElement) {
                   </td>
                 </tr>`
             })}
-              <!-- By independient properties -->
-              <!-- <tr class="modal-info-table-item ${this.styleSelected('totalVolume')}" @click=${ () => {this.selected('totalVolume')}}>
-                <td class="modal-info-table-item-description">Volumen total</td>
-                <td class="modal-info-table-item-option"> ${this.totalVolume ? `${this.totalVolume} Kg` : 'N/D'} ${this.itemSelect('totalVolume')}</td>
-              </tr>
-              <tr class="modal-info-table-item  ${this.styleSelected('bulkingUp')}" @click=${ () => {this.selected('bulkingUp')}}>
-                <td class="modal-info-table-item-description">Aumento de volumen</td>
-                <td class="modal-info-table-item-option"> ${this.bulkingUp ? `${this.bulkingUp} %` : '-100%'} ${this.itemSelect('bulkingUp')}</td>
-              </tr>
-              <tr class="modal-info-table-item  ${this.styleSelected('totalRepetitions')}" @click=${ () => this.selected('totalRepetitions')}>
-                <td class="modal-info-table-item-description"> Repeticiones totales </td>
-                <td class="modal-info-table-item-option"> ${this.totalRepetitions ? `${this.totalRepetitions} rep` : 'N/D'} ${this.itemSelect('totalRepetitions')}</td>
-              </tr>
-              <tr class="modal-info-table-item  ${this.styleSelected('weightPerRepetition')}" @click=${ () => this.selected('weightPerRepetition')}>
-                <td class="modal-info-table-item-description">Peso/rep</td>
-                <td class="modal-info-table-item-option">  ${this.weightPerRepetition ? `${this.weightPerRepetition} rep` : 'N/D'} ${this.itemSelect('weightPerRepetition')}</td>
-              </tr> -->
             </table>
           </div>
         </div>
