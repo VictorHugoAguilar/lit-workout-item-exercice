@@ -21,6 +21,11 @@ class ModalInfo extends EventMixin(LitElement) {
 
   static get properties() {
     return {
+      componentName: {
+        type: String,
+        attribute: 'component-name'
+      },
+      // Start By independient properties
       totalVolume: {
         type: String,
         attribute: 'total-volume'
@@ -37,20 +42,70 @@ class ModalInfo extends EventMixin(LitElement) {
         type: String,
         attribute: 'weight-repetitions'
       },
+      // End By independient properties
+      options: {
+        type: Object,
+        attribute: 'list-options'
+      },
       itemSelected: {
         type: String,
         attribute: 'selected-item'
+      },
+      stylesPrexis: {
+        type: Object,
+        attribute: 'style-prefix'
       }
     }
   }
 
   constructor() {
     super();
+    // Start By independient properties
     this.totalVolume = '';
     this.bulkingUp = '';
     this.totalRepetitions = '';
     this.weightPerRepetition = '';
+    // End By independient properties
     this.itemSelected = 'totalVolume';
+    this.options = {
+      totalVolume: {
+        description: 'Volumen total',
+        attribute: 'total-volume',
+        prefix: '',
+        sufix: 'Kg',
+        optionalText: 'N/D',
+        value: '',
+      },
+      bulkingUp: {
+        description: 'Aumento de volumen',
+        attribute: 'total-volume',
+        prefix: '',
+        sufix: '%',
+        optionalText: '-100%',
+        value: '',
+      },
+      totalRepetitions: {
+        description: 'Repeticiones totales',
+        attribute: 'total-volume',
+        prefix: '',
+        sufix: 'rep',
+        optionalText: 'N/D',
+        value: '',
+      },
+      weightPerRepetition: {
+        description: 'Peso/rep',
+        attribute: 'total-volume',
+        prefix: '',
+        sufix: 'rep',
+        optionalText: 'N/D',
+        value: '',
+      },
+    };
+    this.stylesPrexis = {
+      weightPerRepetition: {
+        color: 'red',
+      },
+    }
   }
 
   static get styles() {
@@ -115,8 +170,12 @@ class ModalInfo extends EventMixin(LitElement) {
         padding: 5px;
       }
 
+      .modal-info-table-item-prefix{
+
+      }
+
       .modal-info-table-item-description{
-        text-align: left;ƒ
+        text-align: left;
       }
 
       .modal-info-table-item-option{
@@ -125,6 +184,11 @@ class ModalInfo extends EventMixin(LitElement) {
 
       .modal-info-table-select{
         background-color: rgba(82, 255,51, 0.3);
+      }
+
+      .modal-info-table-item-option-checked{
+        color: rgba(82, 255,51, 1);
+        font-size: 1rem;
       }
       `,
     ];
@@ -147,7 +211,20 @@ class ModalInfo extends EventMixin(LitElement) {
           </div>
           <div class="modal-body">
             <table class="modal-info-table">
-              <tr class="modal-info-table-item ${this.styleSelected('totalVolume')}" @click=${ () => {this.selected('totalVolume')}}>
+            ${Object.entries(this.options).map(([key, value]) => { 
+              console.log(value)
+              return html`
+                <tr class="modal-info-table-item ${this.styleSelected(key)}" @click=${ () => {this.selected(key)}}>
+                  ${value.prefix ? html`<td style="color: ${this.stylesPrefix(key)};"> ${value.prefix} </td>` : nothing}
+                  <td class="modal-info-table-item-description">${value.description}</td>
+                  <td class="modal-info-table-item-option"> 
+                    ${value.value ? `${value.value} ${value.sufix}` : value.optionalText } 
+                    ${this.itemSelect(key)}
+                  </td>
+                </tr>`
+            })}
+              <!-- By independient properties -->
+              <!-- <tr class="modal-info-table-item ${this.styleSelected('totalVolume')}" @click=${ () => {this.selected('totalVolume')}}>
                 <td class="modal-info-table-item-description">Volumen total</td>
                 <td class="modal-info-table-item-option"> ${this.totalVolume ? `${this.totalVolume} Kg` : 'N/D'} ${this.itemSelect('totalVolume')}</td>
               </tr>
@@ -162,7 +239,7 @@ class ModalInfo extends EventMixin(LitElement) {
               <tr class="modal-info-table-item  ${this.styleSelected('weightPerRepetition')}" @click=${ () => this.selected('weightPerRepetition')}>
                 <td class="modal-info-table-item-description">Peso/rep</td>
                 <td class="modal-info-table-item-option">  ${this.weightPerRepetition ? `${this.weightPerRepetition} rep` : 'N/D'} ${this.itemSelect('weightPerRepetition')}</td>
-              </tr>
+              </tr> -->
             </table>
           </div>
         </div>
@@ -172,22 +249,33 @@ class ModalInfo extends EventMixin(LitElement) {
 
   itemSelect(selected) {
     if (selected === this.itemSelected) {
-      return html `<span class="modal-info-table-item-option-checked">✅</span>`
+      return html `<span class="modal-info-table-item-option-checked">✓</span>`;
     }
     return nothing;
   }
 
   styleSelected(selected) {
     if (selected === this.itemSelected) {
-      return css `modal-info-table-select`
+      return css `modal-info-table-select`;
     }
   }
 
+  stylesPrefix(selected) {
+    if (!selected) {
+      return 'white';
+    }
+    if (!this.stylesPrexis || !this.stylesPrexis[selected] || !this.stylesPrexis[selected].color) {
+      return 'white';
+    }
+    return this.stylesPrexis[selected].color;
+  }
+
   selected(itemSelected) {
-    if (!itemSelected) return;
+    if (!itemSelected) {
+      return;
+    }
     this.itemSelected = itemSelected;
     this.fire('modal-info-item-selected', this.itemSelected);
-    console.log('se ha modificado la opcion por ', this.itemSelected);
   }
 
 }
