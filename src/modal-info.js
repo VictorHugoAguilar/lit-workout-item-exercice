@@ -188,7 +188,6 @@ class ModalInfo extends EventMixin(LitElement) {
           <div class="modal-body">
             <table class="modal-info-table">
             ${Object.entries(this.options).map(([key, value]) => { 
-              console.log(value)
               return html`
                 <tr class="modal-info-table-item ${this.styleSelected(key)}" @click=${ () => {this.selected(key)}}>
                   ${value.prefix ? html`<td style="color: ${this.stylesPrefix(key)};"> ${value.prefix} </td>` : nothing}
