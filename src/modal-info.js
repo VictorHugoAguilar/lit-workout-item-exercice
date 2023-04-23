@@ -25,6 +25,10 @@ class ModalInfo extends EventMixin(LitElement) {
         type: String,
         attribute: 'component-name'
       },
+      modalVisible: {
+        type: Boolean,
+        attribute: 'modal-visible',
+      },
       options: {
         type: Object,
         attribute: 'list-options'
@@ -81,7 +85,8 @@ class ModalInfo extends EventMixin(LitElement) {
       weightPerRepetition: {
         color: 'red',
       },
-    }
+    };
+    this.modalVisible = false;
   }
 
   static get styles() {
@@ -176,6 +181,10 @@ class ModalInfo extends EventMixin(LitElement) {
    * to render into the element.
    */
   render() {
+    return this.modalVisible ? this._tplModal : nothing; 
+  }
+
+  get _tplModal() {
     return html `
       <div class="container">
         <div class="modal-info">
@@ -202,7 +211,7 @@ class ModalInfo extends EventMixin(LitElement) {
           </div>
         </div>
       </div>
-    `;
+  `
   }
 
   itemSelect(selected) {
@@ -233,7 +242,10 @@ class ModalInfo extends EventMixin(LitElement) {
       return;
     }
     this.itemSelected = itemSelected;
-    this.fire('modal-info-item-selected', this.itemSelected);
+    this.fire('modal-info-item-selected', {
+      componentName: this.componentName,
+      itemSelected: this.itemSelected
+    });
   }
 
 }

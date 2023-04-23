@@ -1,9 +1,9 @@
 import {
   LitElement,
   html,
-  css
+  css,
+  nothing
 } from "lit";
-
 
 /**
  * `ItemExercice` Description
@@ -21,17 +21,15 @@ class ItemExercice extends LitElement {
 
   static get properties() {
     return {
-
+      _showModalInfo: {
+        type: Boolean,
+      }
     }
   }
 
-  /**
-   * Instance of the element is created/upgraded. Use: initializing state,
-   * set up event listeners, create shadow dom.
-   * @constructor
-   */
   constructor() {
     super();
+    this._showModalInfo = false;
   }
 
   static get styles() {
@@ -168,98 +166,26 @@ class ItemExercice extends LitElement {
         width: 300px;
         background-color: #5C5E6C;
         color: white;
-
-      }
-
-      .modal-info-header{
-        display: flex;
-        justify-content:space-between;
-        padding: 10px;
-      }
-
-      
-      .modal-title-description{
-        font-size: 0.8rem;
-      }
-
-      .modal-info-table{
-        width: 100%;
-        border-collapse: collapse;
-      }
-      
-      .modal-info-table tr {
-        margin-bottom: 30px;
-      }
-
-      .modal-body {
-        font-size: 0.8rem;
-      }
-
-      .modal-info-table-item td{
-        padding: 5px;
-      }
-
-      .modal-info-table-item-description{
-        text-align: left;ƒ
-      }
-
-      .modal-info-table-item-option{
-        text-align: right;
-      }
-
-      .modal-info-table-select{
-        background-color: rgba(82, 255,51, 0.3);
       }
       `,
     ];
   }
 
-  /**
-   * Implement to describe the element's DOM using lit-html.
-   * Use the element current props to return a lit-html template result
-   * to render into the element.
-   */
   render() {
     return html `
       <div class="container">
-        <!-- <div class="modal"></div> -->
+      ${ this._showModalInfo ? html`<div class="modal"></div>`: nothing }  
         <div class="header">
           <div class="title">
             <span>Lat Pull - Underhand (cable)</span>
           </div>
           <div class="menu">
-            <!-- <div class="modal-info">
-              <div class="modal-info-header">
-                  <span class="modal-title-description">
-                    Establecer métricas de funcionamiento
-                  </span>
-                  <span class="modal-title-option">
-                    ?
-                  </span>
-              </div>
-              <div class="modal-body">
-                <table class="modal-info-table">
-                  <tr class="modal-info-table-item modal-info-table-select">
-                    <td class="modal-info-table-item-description">Volumen total</td>
-                    <td class="modal-info-table-item-option"> 1014 Kg <span class="modal-info-table-item-option-checked">✅</span></td>
-                  </tr>
-                  <tr class="modal-info-table-item">
-                    <td class="modal-info-table-item-description">Aumento de volumen</td>
-                    <td class="modal-info-table-item-option">-54%</td>
-                  </tr>
-                  <tr class="modal-info-table-item">
-                    <td class="modal-info-table-item-description">Repeticiones totales</td>
-                    <td class="modal-info-table-item-option">27 rep</td>
-                  </tr>
-                  <tr class="modal-info-table-item">
-                    <td class="modal-info-table-item-description">Peso/rep</td>
-                    <td class="modal-info-table-item-option">37,56 kg</td>
-                  </tr>
-                </table>
-              </div>
-            </div> -->
-            <modal-info class="modal-info" @modal-info-item-selected="${ (e) => this.selectdAndCloseModal(e) }"></modal-info>
-            <span class="button-info">N/D</span>
+            <modal-info class="modal-info" 
+              component-name="modal-info"
+              @modal-info-item-selected="${ (e) => this._selectdAndCloseModal(e) }"
+              ?modal-visible= ${this._showModalInfo}
+              ></modal-info>
+            <span class="button-info" @click="${ () => this._openModal() }" >N/D</span>
             <span class="button-info">...</span>
           </div>
         </div>
@@ -305,8 +231,15 @@ class ItemExercice extends LitElement {
     `;
   }
 
-  selectdAndCloseModal({detail}) {
+  _selectdAndCloseModal({
+    detail
+  }) {
     console.log('desde el main recibimos ', detail)
+    this._showModalInfo = false;
+  }
+
+  _openModal(modalName) {
+    this._showModalInfo = true;
   }
 
 }
