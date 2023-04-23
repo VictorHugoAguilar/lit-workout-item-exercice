@@ -10,7 +10,7 @@ const NormalizeMixinImplementation = (superclass) =>
     _normalizeText(textToNormalizer, sizeMax, characterForComplete = '...') {
       if (!textToNormalizer) return '';
       const originTextToNormalizer = textToNormalizer.trim();
-      return originTextToNormalizer.length > sizeMax ? `${originTextToNormalizer.substring(0, sizeMax)}${characterForComplete}` : originNameExercice;
+      return originTextToNormalizer.length > sizeMax ? `${originTextToNormalizer.substring(0, sizeMax)}${characterForComplete}` : originTextToNormalizer;
     }
 
   }

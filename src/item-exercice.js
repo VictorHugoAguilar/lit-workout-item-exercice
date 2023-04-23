@@ -39,7 +39,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
 
   constructor() {
     super();
-    this.nameExercice = 'Lat Pull - Underhand (cable)'
+    this.nameExercice = '';
     this._showModalInfo = false;
   }
 
@@ -67,7 +67,8 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       }
 
       .title {
-        width: 70%;
+        font-size: 0.9rem;
+        width: 75%;
         color: #52FF33;
         font-weight:600;
       }
@@ -132,10 +133,11 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
         color: white;
         font-weight: 400;
         text-align:center;
+        font-size: 0.8rem;
       }
 
       .table-item{
-        height: 25px !important;
+        height: 25px;
       }
 
       .table-item-select{
@@ -193,7 +195,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       ${ this._showModalInfo ? html`<div class="modal"></div>`: nothing }  
         <div class="header">
           <div class="title">
-            <span>${this._normalizeText(this.nameExercice, 27, '...')}</span>
+            <span>${this._normalizeText(this.nameExercice, 30, '...')}</span>
           </div>
           <div class="menu">
             <modal-info class="modal-info" 
