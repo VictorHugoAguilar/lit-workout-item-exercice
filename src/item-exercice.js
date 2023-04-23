@@ -1,10 +1,16 @@
 import {
   LitElement,
   html,
-  css
+  css,
+  nothing
 } from "lit";
 
-
+import {
+  EventMixin,
+} from './mixins/EventMixin.js';
+import {
+  NormalizeMixin,
+} from './mixins/NormalizeMixin.js';
 /**
  * `ItemExercice` Description
  *
@@ -13,7 +19,7 @@ import {
  * @demo
  * 
  */
-class ItemExercice extends LitElement {
+class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
 
   static get is() {
     return 'item-exercice';
@@ -21,17 +27,20 @@ class ItemExercice extends LitElement {
 
   static get properties() {
     return {
-
+      nameExercice: {
+        type: String,
+        attribute: 'name-exercice'
+      },
+      _showModalInfo: {
+        type: Boolean,
+      }
     }
   }
 
-  /**
-   * Instance of the element is created/upgraded. Use: initializing state,
-   * set up event listeners, create shadow dom.
-   * @constructor
-   */
   constructor() {
     super();
+    this.nameExercice = '';
+    this._showModalInfo = false;
   }
 
   static get styles() {
@@ -41,10 +50,10 @@ class ItemExercice extends LitElement {
         display: block;
         font-family: Verdana, Geneva, Tahoma, sans-serif ;
       }
+      
       .container{
         background-color: #5D5C5C;
         width: 100%;
-        padding: 3px;
         display: flex;
         flex-direction:column;
       }
@@ -58,7 +67,8 @@ class ItemExercice extends LitElement {
       }
 
       .title {
-        width: 70%;
+        font-size: 0.9rem;
+        width: 75%;
         color: #52FF33;
         font-weight:600;
       }
@@ -93,6 +103,7 @@ class ItemExercice extends LitElement {
 
       .header-note-description{
         color: rgba(82, 255,51, 0.8);
+        font-size: 0.8rem;
       }
 
       .header-note-option {
@@ -112,6 +123,7 @@ class ItemExercice extends LitElement {
       }
 
       .thead {
+        height: 25px;
         color: white;
         font-weight: 600;
         font-size: 0.8rem;
@@ -121,6 +133,11 @@ class ItemExercice extends LitElement {
         color: white;
         font-weight: 400;
         text-align:center;
+        font-size: 0.8rem;
+      }
+
+      .table-item{
+        height: 25px;
       }
 
       .table-item-select{
@@ -149,24 +166,44 @@ class ItemExercice extends LitElement {
       .button-add:hover{
         background-color: rgba(82, 255,51, 0.5);
       }
+
+      .modal{
+        position: absolute; 
+        z-index: 5;
+        width: 400px;
+        height: 100%;
+        background-color: rgba(1, 1, 1, 0.6);
+      }
+
+      .modal-info{
+        z-index: 99;
+        display: inline-block;
+        top: 10px;
+        position: absolute;
+        border-radius: 10px;
+        width: 300px;
+        background-color: #5C5E6C;
+        color: white;
+      }
       `,
     ];
   }
 
-  /**
-   * Implement to describe the element's DOM using lit-html.
-   * Use the element current props to return a lit-html template result
-   * to render into the element.
-   */
   render() {
     return html `
       <div class="container">
+      ${ this._showModalInfo ? html`<div class="modal"></div>`: nothing }  
         <div class="header">
           <div class="title">
-            <span>Lat Pull - Underhand (cable)</span>
+            <span>${this._normalizeText(this.nameExercice, 30, '...')}</span>
           </div>
           <div class="menu">
-            <span class="button-info">N/D</span>
+            <modal-info class="modal-info" 
+              component-name="modal-info"
+              @modal-info-item-selected="${ (e) => this._selectdAndCloseModal(e) }"
+              ?modal-visible= ${this._showModalInfo}
+              ></modal-info>
+            <span class="button-info" @click="${ () => this._openModal() }" >N/D</span>
             <span class="button-info">...</span>
           </div>
         </div>
@@ -200,6 +237,13 @@ class ItemExercice extends LitElement {
                 <td>15</td>
                 <td>✅</td>
               </tr>
+              <tr class="table-item">
+                <td>2</td>
+                <td>35Kg x 15(P)</td>
+                <td>35</td>
+                <td>15</td>
+                <td>✅</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -211,6 +255,18 @@ class ItemExercice extends LitElement {
       </div>
     `;
   }
+
+  _selectdAndCloseModal({
+    detail
+  }) {
+    console.log('desde el main recibimos ', detail)
+    this._showModalInfo = false;
+  }
+
+  _openModal(modalName) {
+    this._showModalInfo = true;
+  }
+
 
 }
 
