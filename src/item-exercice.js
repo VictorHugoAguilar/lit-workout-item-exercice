@@ -5,6 +5,12 @@ import {
   nothing
 } from "lit";
 
+import {
+  EventMixin,
+} from './mixins/EventMixin.js';
+import {
+  NormalizeMixin,
+} from './mixins/NormalizeMixin.js';
 /**
  * `ItemExercice` Description
  *
@@ -13,7 +19,7 @@ import {
  * @demo
  * 
  */
-class ItemExercice extends LitElement {
+class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
 
   static get is() {
     return 'item-exercice';
@@ -21,6 +27,10 @@ class ItemExercice extends LitElement {
 
   static get properties() {
     return {
+      nameExercice: {
+        type: String,
+        attribute: 'name-exercice'
+      },
       _showModalInfo: {
         type: Boolean,
       }
@@ -29,6 +39,7 @@ class ItemExercice extends LitElement {
 
   constructor() {
     super();
+    this.nameExercice = 'Lat Pull - Underhand (cable)'
     this._showModalInfo = false;
   }
 
@@ -43,7 +54,6 @@ class ItemExercice extends LitElement {
       .container{
         background-color: #5D5C5C;
         width: 100%;
-        height: 220px;
         display: flex;
         flex-direction:column;
       }
@@ -92,6 +102,7 @@ class ItemExercice extends LitElement {
 
       .header-note-description{
         color: rgba(82, 255,51, 0.8);
+        font-size: 0.8rem;
       }
 
       .header-note-option {
@@ -111,6 +122,7 @@ class ItemExercice extends LitElement {
       }
 
       .thead {
+        height: 25px;
         color: white;
         font-weight: 600;
         font-size: 0.8rem;
@@ -120,6 +132,10 @@ class ItemExercice extends LitElement {
         color: white;
         font-weight: 400;
         text-align:center;
+      }
+
+      .table-item{
+        height: 25px !important;
       }
 
       .table-item-select{
@@ -153,7 +169,7 @@ class ItemExercice extends LitElement {
         position: absolute; 
         z-index: 5;
         width: 400px;
-        height: 220px;
+        height: 100%;
         background-color: rgba(1, 1, 1, 0.6);
       }
 
@@ -177,7 +193,7 @@ class ItemExercice extends LitElement {
       ${ this._showModalInfo ? html`<div class="modal"></div>`: nothing }  
         <div class="header">
           <div class="title">
-            <span>Lat Pull - Underhand (cable)</span>
+            <span>${this._normalizeText(this.nameExercice, 27, '...')}</span>
           </div>
           <div class="menu">
             <modal-info class="modal-info" 
@@ -219,6 +235,13 @@ class ItemExercice extends LitElement {
                 <td>15</td>
                 <td>✅</td>
               </tr>
+              <tr class="table-item">
+                <td>2</td>
+                <td>35Kg x 15(P)</td>
+                <td>35</td>
+                <td>15</td>
+                <td>✅</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -241,6 +264,7 @@ class ItemExercice extends LitElement {
   _openModal(modalName) {
     this._showModalInfo = true;
   }
+
 
 }
 
