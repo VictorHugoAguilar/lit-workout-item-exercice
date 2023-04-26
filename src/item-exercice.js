@@ -256,6 +256,25 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
         background-color: #5C5E6C;
         color: white;
       }
+
+      .item-input{
+        width: 60px;
+        font-weight: bold;
+        text-align: center;
+        color: rgba(82, 255,51, 0.8);
+        background-color: transparent;
+        border: none;
+      }
+
+      .item-input:active {
+        border: none;
+        outline: none;
+      }
+
+      .item-input:focus {
+        border: none;
+        outline: none;
+      }
       `,
     ];
   }
@@ -298,13 +317,18 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
             <tbody class="tbody">
               ${ this._seriesExercice.map( serie => {
                 return html`
-                <tr class="table-item ${serie.checked ? 'table-item-select' : ''}"
-                  @click=${ () => this._selectedItem(serie.id) }>
+                <tr class="table-item ${serie.checked ? 'table-item-select' : ''}">
                   <td>${serie.session}</td>
                   <td>${serie.before ? '' : ''}</td>
-                  <td>${serie.kg}</td>
-                  <td>${serie.series}</td>
-                  <td>${this._tmplCheckItem(serie.checked)}</td>
+                  <td>
+                    <input class="item-input" type="text" value="${serie.kg}" 
+                      @focusout=${ (e) => this._updateValueItem(e, serie.id, 'kg')}>
+                  </td>
+                  <td>
+                    <input class="item-input" type="text" value="${serie.series}"
+                    @focusout=${ (e) => this._updateValueItem(e, serie.id, 'series')}>
+                  </td>
+                  <td @click=${ () => this._selectedItem(serie.id) }> ${this._tmplCheckItem(serie.checked)}</td>
                 </tr>
                 `
               }) }
@@ -313,7 +337,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
         </div>
         <div class="footer">
           <span class="button">
-            <button class="button-add">+ Añadir serie</button>
+            <button class="button-add" @click=${() => this._addNewItemSerie()}>+ Añadir serie</button>
           </span>
         </div>
       </div>
@@ -345,13 +369,43 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       html `<span style="font-size: 1.3rem; color: red;">☒</span>`
   }
 
-  _selectedItem(id){
-    this._seriesExercice.map( serie => {
-      if(serie.id === id){
+  _selectedItem(id) {
+    this._seriesExercice.map(serie => {
+      if (serie.id === id) {
         serie.checked = !serie.checked;
       }
       return serie;
     })
+    this.requestUpdate();
+  }
+
+  _addNewItemSerie() {
+    const onlyNumber = this._seriesExercice.filter(serie => !isNaN(serie.session));
+    const newItem = {
+      id: this._seriesExercice.length,
+      session: onlyNumber.length + 1,
+      before: {},
+      kg: 0,
+      series: 0,
+      checked: false
+    };
+    this._seriesExercice.push(newItem);
+    this.requestUpdate();
+  }
+
+  _updateValueItem(ev, id, type) {
+    this._seriesExercice.map(serie => {
+      if (serie.id === id) {
+        if (type === 'kg') {
+          serie.kg = Number(ev.target.value);
+        }
+        if (type === 'series') {
+          serie.series = Number(ev.target.value);
+        }
+      }
+      return serie;
+    })
+    console.table(this._seriesExercice)
     this.requestUpdate();
   }
 
