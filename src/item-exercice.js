@@ -40,6 +40,10 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       },
       _showModalInfo: {
         type: Boolean,
+      },
+      _seriesExercice: {
+        type: Array,
+        attribute: 'series-exercice'
       }
     }
   }
@@ -50,6 +54,39 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
     this._openNote = true;
     this.noteExercicie = 'Este ejercicio se hace en maquina';
     this._showModalInfo = false;
+    this._seriesExercice = [{
+        id: 0,
+        session: 'P',
+        before: {},
+        kg: 14,
+        series: 10,
+        checked: true
+      },
+      {
+        id: 1,
+        session: 1,
+        before: {},
+        kg: 14,
+        series: 10,
+        checked: false
+      },
+      {
+        id: 2,
+        session: 2,
+        before: {},
+        kg: 14,
+        series: 10,
+        checked: false
+      },
+      {
+        id: 3,
+        session: 3,
+        before: {},
+        kg: 14,
+        series: 10,
+        checked: false
+      },
+    ]
   }
 
   static get styles() {
@@ -254,32 +291,23 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
                 <th>Session</th>
                 <th>Anterior</th>
                 <th>Kg</th>
-                <th>Tiempo</th>
+                <th>Series</th>
                 <th>✅</th>
               </tr>
             </thead>
             <tbody class="tbody">
-              <tr class="table-item table-item-select">
-                <td>1</td>
-                <td>35Kg x 15(P)</td>
-                <td>35</td>
-                <td>15</td>
-                <td>✅</td>
-              </tr>
-              <tr class="table-item">
-                <td>2</td>
-                <td>35Kg x 15(P)</td>
-                <td>35</td>
-                <td>15</td>
-                <td>✅</td>
-              </tr>
-              <tr class="table-item">
-                <td>2</td>
-                <td>35Kg x 15(P)</td>
-                <td>35</td>
-                <td>15</td>
-                <td>✅</td>
-              </tr>
+              ${ this._seriesExercice.map( serie => {
+                return html`
+                <tr class="table-item ${serie.checked ? 'table-item-select' : ''}"
+                  @click=${ () => this._selectedItem(serie.id) }>
+                  <td>${serie.session}</td>
+                  <td>${serie.before ? '' : ''}</td>
+                  <td>${serie.kg}</td>
+                  <td>${serie.series}</td>
+                  <td>${this._tmplCheckItem(serie.checked)}</td>
+                </tr>
+                `
+              }) }
             </tbody>
           </table>
         </div>
@@ -312,6 +340,20 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
 
   }
 
+  _tmplCheckItem(checked) {
+    return checked ? html `<span style="font-size: 1.3rem; color: rgba(82, 255,51, 1);">☑</span>` :
+      html `<span style="font-size: 1.3rem; color: red;">☒</span>`
+  }
+
+  _selectedItem(id){
+    this._seriesExercice.map( serie => {
+      if(serie.id === id){
+        serie.checked = !serie.checked;
+      }
+      return serie;
+    })
+    this.requestUpdate();
+  }
 
 }
 
