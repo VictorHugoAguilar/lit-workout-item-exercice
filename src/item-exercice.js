@@ -48,6 +48,12 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       options: {
         type: Object,
         attribute: 'options'
+      },
+      _metrics: {
+        type: String,
+      },
+      _metricSeleted: {
+        type: String,
       }
 
     }
@@ -93,39 +99,47 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       },
     ];
     this.options = {
-      totalVolume: {
-        description: 'Volumen total',
-        attribute: 'total-volume',
-        prefix: '',
-        sufix: 'Kg',
-        optionalText: 'N/D',
-        value: '',
+        totalVolume: {
+          description: 'Volumen total',
+          attribute: 'totalVolume',
+          prefix: '',
+          sufix: 'Kg',
+          optionalText: 'N/D',
+          value: '',
+          selected: false
+        },
+        bulkingUp: {
+          description: 'Aumento de volumen',
+          attribute: 'bulkingUp',
+          prefix: '',
+          sufix: '%',
+          optionalText: '-100%',
+          value: '',
+          selected: false
+        },
+        totalRepetitions: {
+          description: 'Repeticiones totales',
+          attribute: 'totalRepetitions',
+          prefix: '',
+          sufix: 'rep',
+          optionalText: 'N/D',
+          value: '',
+          selected: false
+        },
+        weightPerRepetition: {
+          description: 'Peso/rep',
+          attribute: 'weightPerRepetition',
+          prefix: '',
+          sufix: 'rep',
+          optionalText: 'N/D',
+          value: '',
+          selected: false
+        },
       },
-      bulkingUp: {
-        description: 'Aumento de volumen',
-        attribute: 'total-volume',
-        prefix: '',
-        sufix: '%',
-        optionalText: '-100%',
-        value: '',
-      },
-      totalRepetitions: {
-        description: 'Repeticiones totales',
-        attribute: 'total-volume',
-        prefix: '',
-        sufix: 'rep',
-        optionalText: 'N/D',
-        value: '',
-      },
-      weightPerRepetition: {
-        description: 'Peso/rep',
-        attribute: 'total-volume',
-        prefix: '',
-        sufix: 'rep',
-        optionalText: 'N/D',
-        value: '',
-      },
-    }
+
+      this._metrics = 'N/D';
+    this._metricSeleted = 'totalVolume';
+
   }
 
   static get styles() {
@@ -167,12 +181,24 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       }
 
       .button-info{
+        white-space: nowrap;
+        width: auto;
         background-color: rgba(82, 255,51, 0.3);
         color: rgba(82, 255,51, 1);
         font-weight:bold;
-        border-radius: 10px;
+        border-radius: 5px;
         padding: 0.3rem;
-        font-size: 0.8rem;
+        font-size: 0.7rem;
+        margin-left: 0.4rem; 
+      }
+
+      .button-option{
+        background-color: rgba(82, 255,51, 0.3);
+        color: rgba(82, 255,51, 1);
+        font-weight:bold;
+        border-radius: 5px;
+        padding: 0.3rem;
+        font-size: 0.7rem;
         margin-left: 0.4rem; 
       }
 
@@ -333,8 +359,8 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
               ?modal-visible= ${this._showModalInfo}
               .options=${this.options}
               ></modal-info>
-            <span class="button-info" @click="${ () => this._openModal() }" >N/D</span>
-            <span class="button-info">...</span>
+            <span class="button-info" @click="${ () => this._openModal() }" >${this._metrics}</span>
+            <span class="button-option">...</span>
           </div>
         </div>
         <div class="header-note header-note-open ${ this._styleIconnote}">
@@ -388,6 +414,8 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
     detail
   }) {
     console.log('desde el main recibimos ', detail)
+    this._metricSeleted = detail.itemSelected ? detail.itemSelected : 'totalVolume';
+    this._updateMetrics();
     this._showModalInfo = false;
   }
 
@@ -416,6 +444,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       }
       return serie;
     })
+    this._updateMetrics();
     this.requestUpdate();
   }
 
@@ -446,6 +475,49 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       return serie;
     })
     console.table(this._seriesExercice)
+    this._updateMetrics();
+    this.requestUpdate();
+  }
+
+
+  _updateMetrics() {
+    Object.entries(this.options).map(([key, value]) => {
+      // console.log('key', key)
+      if (key === 'totalVolume') {
+        const totalVolumen = this._seriesExercice
+          .filter(s => !isNaN(s.session))
+          .filter(s => s.checked)
+          .map(s => s.kg)
+          .reduce((a, b) => a + b, 0);
+
+        return value.value = totalVolumen;
+      }
+      if (key === 'bulkingUp') {}
+      if (key === 'totalRepetitions') {
+        const totalSeries = this._seriesExercice
+          .filter(s => !isNaN(s.session))
+          .filter(s => s.checked)
+          .map(s => s.series)
+          .reduce((a, b) => a + b, 0);
+
+        return value.value = totalSeries;
+      }
+      if (key === 'weightPerRepetition') {}
+    });
+    console.table(this.options)
+    this._changeMetricActive();
+  }
+
+  _changeMetricActive() {
+    console.log('>>>>>>>>>>> cambio de valor de metric')
+    Object.entries(this.options).map(([key, value]) => {
+      if (key === this._metricSeleted) {
+        this._metrics = `${value.value} ${value.sufix}`
+        console.log('>> thos', this._metrics)
+        return value.selected = true;
+      }
+      return value.selected = false;
+    })
     this.requestUpdate();
   }
 
