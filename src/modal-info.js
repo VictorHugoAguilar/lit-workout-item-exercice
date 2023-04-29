@@ -29,7 +29,7 @@ class ModalInfo extends EventMixin(LitElement) {
         type: Boolean,
         attribute: 'modal-visible',
       },
-      options: {
+      listOptions: {
         type: Object,
         attribute: 'list-options'
       },
@@ -47,46 +47,15 @@ class ModalInfo extends EventMixin(LitElement) {
   constructor() {
     super();
     this.itemSelected = 'totalVolume';
-    this.options = {
-      totalVolume: {
-        description: 'Volumen total',
-        attribute: 'total-volume',
-        prefix: '',
-        sufix: 'Kg',
-        optionalText: 'N/D',
-        value: '',
-      },
-      bulkingUp: {
-        description: 'Aumento de volumen',
-        attribute: 'total-volume',
-        prefix: '',
-        sufix: '%',
-        optionalText: '-100%',
-        value: '',
-      },
-      totalRepetitions: {
-        description: 'Repeticiones totales',
-        attribute: 'total-volume',
-        prefix: '',
-        sufix: 'rep',
-        optionalText: 'N/D',
-        value: '',
-      },
-      weightPerRepetition: {
-        description: 'Peso/rep',
-        attribute: 'total-volume',
-        prefix: '',
-        sufix: 'rep',
-        optionalText: 'N/D',
-        value: '',
-      },
-    };
+    // this.listOptions = {};
     this.stylesPrexis = {
       weightPerRepetition: {
         color: 'red',
       },
     };
     this.modalVisible = false;
+
+    console.log('=>', this.listOptions)
   }
 
   static get styles() {
@@ -181,7 +150,7 @@ class ModalInfo extends EventMixin(LitElement) {
    * to render into the element.
    */
   render() {
-    return this.modalVisible ? this._tplModal : nothing; 
+    return this.modalVisible ? this._tplModal : nothing;
   }
 
   get _tplModal() {
@@ -196,7 +165,7 @@ class ModalInfo extends EventMixin(LitElement) {
           </div>
           <div class="modal-body">
             <table class="modal-info-table">
-            ${Object.entries(this.options).map(([key, value]) => { 
+            ${Object.entries(this.listOptions).map(([key, value]) => { 
               return html`
                 <tr class="modal-info-table-item ${this.styleSelected(key)}" @click=${ () => {this.selected(key)}}>
                   ${value.prefix ? html`<td style="color: ${this.stylesPrefix(key)};"> ${value.prefix} </td>` : nothing}

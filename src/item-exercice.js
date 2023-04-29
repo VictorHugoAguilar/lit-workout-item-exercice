@@ -44,7 +44,12 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       _seriesExercice: {
         type: Array,
         attribute: 'series-exercice'
+      },
+      _listOptions: {
+        type: Object,
+        attribute: 'list-options'
       }
+
     }
   }
 
@@ -86,7 +91,41 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
         series: 10,
         checked: false
       },
-    ]
+    ];
+    this._listOptions = {
+      totalVolume: {
+        description: 'Volumen total',
+        attribute: 'total-volume',
+        prefix: '',
+        sufix: 'Kg',
+        optionalText: 'N/D',
+        value: '',
+      },
+      bulkingUp: {
+        description: 'Aumento de volumen',
+        attribute: 'total-volume',
+        prefix: '',
+        sufix: '%',
+        optionalText: '-100%',
+        value: '',
+      },
+      totalRepetitions: {
+        description: 'Repeticiones totales',
+        attribute: 'total-volume',
+        prefix: '',
+        sufix: 'rep',
+        optionalText: 'N/D',
+        value: '',
+      },
+      weightPerRepetition: {
+        description: 'Peso/rep',
+        attribute: 'total-volume',
+        prefix: '',
+        sufix: 'rep',
+        optionalText: 'N/D',
+        value: '',
+      },
+    }
   }
 
   static get styles() {
@@ -292,6 +331,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
               component-name="modal-info"
               @modal-info-item-selected="${ (e) => this._selectdAndCloseModal(e) }"
               ?modal-visible= ${this._showModalInfo}
+              .list-options=${this._listOptions}
               ></modal-info>
             <span class="button-info" @click="${ () => this._openModal() }" >N/D</span>
             <span class="button-info">...</span>
