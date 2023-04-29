@@ -25,6 +25,10 @@ class ModalInfo extends EventMixin(LitElement) {
         type: String,
         attribute: 'component-name'
       },
+      titleDescription: {
+        type: String,
+        attribute: 'title-description'
+      },
       modalVisible: {
         type: Boolean,
         attribute: 'modal-visible',
@@ -54,8 +58,6 @@ class ModalInfo extends EventMixin(LitElement) {
       },
     };
     this.modalVisible = false;
-
-    console.log('=>', this.options)
   }
 
   static get styles() {
@@ -120,6 +122,11 @@ class ModalInfo extends EventMixin(LitElement) {
         padding: 5px;
       }
 
+      .modal-info-table-item:hover{
+        background-color: rgba(82, 255,51, 0.3);
+        border-bottom: 1px solid rgba(82, 255, 51, 1);
+      }
+
       .modal-info-table-item-prefix{
 
       }
@@ -158,8 +165,8 @@ class ModalInfo extends EventMixin(LitElement) {
       <div class="container">
         <div class="modal-info">
           <div class="modal-info-header">
-            <span class="modal-title-description">
-              Establecer métricas de funcionamiento
+            <span class="modal-title-description"> ${this.titleDescription}
+              
             </span>
             <span class="modal-title-option"> ? </span>
           </div>

@@ -41,13 +41,15 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       _showModalInfo: {
         type: Boolean,
       },
+      _showModalTypeSerie: {
+        type: Boolean,
+      },
       _seriesExercice: {
         type: Array,
         attribute: 'series-exercice'
       },
       options: {
         type: Object,
-        attribute: 'options'
       },
       _metrics: {
         type: String,
@@ -65,6 +67,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
     this._openNote = true;
     this.noteExercicie = 'Este ejercicio se hace en maquina';
     this._showModalInfo = false;
+    this._showModalTypeSerie = false;
     this._seriesExercice = [{
         id: 0,
         session: 'P',
@@ -132,6 +135,36 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
           prefix: '',
           sufix: 'rep',
           optionalText: 'N/D',
+          value: '',
+          selected: false
+        },
+      },
+
+      this.optionsTypeSerie = {
+        heating: {
+          description: 'Calentamiento',
+          attribute: 'heating',
+          prefix: 'P',
+          sufix: '',
+          optionalText: '',
+          value: '',
+          selected: false
+        },
+        decreasing: {
+          description: 'Serie Decreciente',
+          attribute: 'decreasing',
+          prefix: 'S',
+          sufix: '',
+          optionalText: '',
+          value: '',
+          selected: false
+        },
+        error: {
+          description: 'Error',
+          attribute: 'error',
+          prefix: 'E',
+          sufix: '',
+          optionalText: '',
           value: '',
           selected: false
         },
@@ -314,8 +347,20 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       .modal-info{
         z-index: 99;
         display: inline-block;
-        top: 10px;
-        position: absolute;
+        left: -250px;
+        position: relative;
+        border-radius: 10px;
+        width: 300px;
+        background-color: #5C5E6C;
+        color: white;
+      }
+
+      .modal-type-serie{
+        z-index: 99;
+        display: inline-block;
+        top: 20px;
+        left: 50px;
+        position: relative;
         border-radius: 10px;
         width: 300px;
         background-color: #5C5E6C;
@@ -347,7 +392,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
   render() {
     return html `
       <div class="container">
-      ${ this._showModalInfo ? html`<div class="modal"></div>`: nothing }  
+      ${ this._showModalInfo || this._showModalTypeSerie ? html`<div class="modal"></div>`: nothing }  
         <div class="header">
           <div class="title">
             <span>${this._normalizeText(this.nameExercice, 30, '...')}</span>
@@ -355,6 +400,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
           <div class="menu">
             <modal-info class="modal-info" 
               component-name="modal-info"
+              title-description="Establecer métricas de funcionamiento"
               @modal-info-item-selected="${ (e) => this._selectdAndCloseModal(e) }"
               ?modal-visible= ${this._showModalInfo}
               .options=${this.options}
@@ -380,11 +426,18 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
                 <th>✅</th>
               </tr>
             </thead>
+            <modal-info class="modal-type-serie" 
+              component-name="modal-type-serie"
+              title-description="Establecer tipo de serie"
+              @modal-info-item-selected="${ (e) => this._selectdAndCloseModalSerieType(e) }"
+              ?modal-visible= ${this._showModalTypeSerie}
+              .options=${this.optionsTypeSerie}
+            ></modal-info>
             <tbody class="tbody">
               ${ this._seriesExercice.map( serie => {
                 return html`
                 <tr class="table-item ${serie.checked ? 'table-item-select' : ''}">
-                  <td>${serie.session}</td>
+                  <td @click=${ () => this._showModalTypeSerie = !this._showModalTypeSerie } >${serie.session} </td>
                   <td>${serie.before ? '' : ''}</td>
                   <td>
                     <input class="item-input" type="text" value="${serie.kg}" 
@@ -417,6 +470,13 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
     this._metricSeleted = detail.itemSelected ? detail.itemSelected : 'totalVolume';
     this._updateMetrics();
     this._showModalInfo = false;
+  }
+
+  _selectdAndCloseModalSerieType({
+    detail
+  }) {
+    console.log('desde el main recibimos ', detail)
+    this._showModalTypeSerie = false;
   }
 
   _openModal(modalName) {
@@ -509,11 +569,9 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
   }
 
   _changeMetricActive() {
-    console.log('>>>>>>>>>>> cambio de valor de metric')
     Object.entries(this.options).map(([key, value]) => {
       if (key === this._metricSeleted) {
-        this._metrics = `${value.value} ${value.sufix}`
-        console.log('>> thos', this._metrics)
+        this._metrics = value.value ? `${value.value} ${value.sufix}` : 'N/D';
         return value.selected = true;
       }
       return value.selected = false;
