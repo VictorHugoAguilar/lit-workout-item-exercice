@@ -45,9 +45,9 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
         type: Array,
         attribute: 'series-exercice'
       },
-      _listOptions: {
+      options: {
         type: Object,
-        attribute: 'list-options'
+        attribute: 'options'
       }
 
     }
@@ -92,7 +92,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
         checked: false
       },
     ];
-    this._listOptions = {
+    this.options = {
       totalVolume: {
         description: 'Volumen total',
         attribute: 'total-volume',
@@ -331,7 +331,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
               component-name="modal-info"
               @modal-info-item-selected="${ (e) => this._selectdAndCloseModal(e) }"
               ?modal-visible= ${this._showModalInfo}
-              .list-options=${this._listOptions}
+              .options=${this.options}
               ></modal-info>
             <span class="button-info" @click="${ () => this._openModal() }" >N/D</span>
             <span class="button-info">...</span>

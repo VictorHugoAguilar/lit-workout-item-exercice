@@ -29,9 +29,9 @@ class ModalInfo extends EventMixin(LitElement) {
         type: Boolean,
         attribute: 'modal-visible',
       },
-      listOptions: {
+      options: {
         type: Object,
-        attribute: 'list-options'
+        attribute: 'options'
       },
       itemSelected: {
         type: String,
@@ -47,7 +47,7 @@ class ModalInfo extends EventMixin(LitElement) {
   constructor() {
     super();
     this.itemSelected = 'totalVolume';
-    // this.listOptions = {};
+    this.options = {};
     this.stylesPrexis = {
       weightPerRepetition: {
         color: 'red',
@@ -55,7 +55,7 @@ class ModalInfo extends EventMixin(LitElement) {
     };
     this.modalVisible = false;
 
-    console.log('=>', this.listOptions)
+    console.log('=>', this.options)
   }
 
   static get styles() {
@@ -165,7 +165,7 @@ class ModalInfo extends EventMixin(LitElement) {
           </div>
           <div class="modal-body">
             <table class="modal-info-table">
-            ${Object.entries(this.listOptions).map(([key, value]) => { 
+            ${Object.entries(this.options).map(([key, value]) => { 
               return html`
                 <tr class="modal-info-table-item ${this.styleSelected(key)}" @click=${ () => {this.selected(key)}}>
                   ${value.prefix ? html`<td style="color: ${this.stylesPrefix(key)};"> ${value.prefix} </td>` : nothing}
