@@ -424,11 +424,6 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
 
   }
 
-  _tmplCheckItem(checked) {
-    return checked ? html `<span style="font-size: 1.3rem; color: rgba(82, 255,51, 1);">☑</span>` :
-      html `<span style="font-size: 1.3rem; color: red;">☒</span>`
-  }
-
   get _tmplHeaderTable() {
     return html `
       <tr class="thead">
@@ -484,6 +479,11 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
           </span>
           <span class="header-note-option" @click=${ () => this._openNote = !this._openNote} > ${ this._tmplIconNote } </span>
         </div>` : nothing
+  }
+
+  _tmplCheckItem(checked) {
+    return checked ? html `<span style="font-size: 1.3rem; color: rgba(82, 255,51, 1);">☑</span>` :
+      html `<span style="font-size: 1.3rem; color: red;">☒</span>`
   }
 
   _selectedItem(id) {
@@ -556,7 +556,6 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
     this._updateMetrics();
     this.requestUpdate();
   }
-
 
   _updateMetrics() {
     console.log('>>>> _updateMetrics')
