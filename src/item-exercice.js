@@ -359,6 +359,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
                 <th>Kg</th>
                 <th>Series</th>
                 <th>✅</th>
+                <th>⚠️</th>
               </tr>
             </thead>
             ${this._tmplModalSessionType}
@@ -377,6 +378,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
                     @focusout=${ (e) => this._updateValueItem(e, serie.id, 'series')}>
                   </td>
                   <td @click=${ () => this._selectedItem(serie.id) }> ${this._tmplCheckItem(serie.checked)}</td>
+                  <td @click=${ () => this._deleteItem(serie.id) }>🗑️</td>
                 </tr>
                 `
               }) }
@@ -481,7 +483,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
 
     let laterKg = 0;
     let laterSeries = 0;
-    console.table(onlyNumber)
+    // console.table(onlyNumber)
     if (onlyNumber.length >= 1) {
       laterKg = onlyNumber[onlyNumber.length - 1].kg;
       laterSeries = onlyNumber[onlyNumber.length - 1].series;
@@ -496,6 +498,11 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       checked: false
     };
     this._seriesExercice.push(newItem);
+    this.requestUpdate();
+  }
+
+  _deleteItem(id) {
+    this._seriesExercice = this._seriesExercice.filter(serie => serie.id !== id)
     this.requestUpdate();
   }
 
@@ -586,7 +593,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
         return value;
       }
     });
-    console.table(this.options)
+    // console.table(this.options)
     this._changeMetricActive();
   }
 
@@ -600,14 +607,17 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       value.selected = false;
       return value;
     })
-    console.table(this.options)
+    // console.table(this.options)
     this.requestUpdate();
   }
 
   _selectItemSession(id) {
     this._itemSessionSelected = id;
-    console.log('_selectItemSession', this._itemSessionSelected)
+    // console.log('_selectItemSession', this._itemSessionSelected)
   }
+
+
+
 
 
   get _sessionType() {
