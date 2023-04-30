@@ -44,6 +44,9 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       _openNote: {
         type: Boolean,
       },
+      _showNotesExercice: {
+        type: Boolean,
+      },
       _showModalMetrics: {
         type: Boolean,
       },
@@ -73,6 +76,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
   constructor() {
     super();
     this.nameExercice = '';
+    this._showNotesExercice = true;
     this._openNote = true;
     this.noteExercicie = 'Este ejercicio se hace en maquina';
     this._showModalMetrics = false;
@@ -333,7 +337,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
   render() {
     return html `
       <div class="container">
-      ${ this._showModalMetrics || this._showModalTypeSerie ? html`<div class="modal"></div>`: nothing }  
+        ${ this._showModalMetrics || this._showModalTypeSerie ? html`<div class="modal"></div>`: nothing }  
         <div class="header">
           <div class="title">
             <span>${this._normalizeText(this.nameExercice, 30, '...')}</span>
@@ -344,22 +348,11 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
             <span class="button-option">...</span>
           </div>
         </div>
-        <div class="header-note header-note-open ${ this._styleIconnote}">
-          <span class="header-note-description">
-            <input type="text" class="header-note-description-input" value=${this.noteExercicie} />
-          </span>
-          <span class="header-note-option" @click=${ () => this._openNote = !this._openNote} > ${ this._tmplIconNote } </span>
-        </div>
+        <!-- Add notes -->
+        ${ this._tmplNotes }
         <div class="body">
           <table class="table">
-            <thead>
-              <tr class="thead">
-                <th>Session</th>
-                <th>Anterior</th>
-                <th>Kg</th>
-                <th>Series</th>
-                <th>✅</th>
-              </tr>
+            ${this._tmplHeaderTable}
             </thead>
             ${this._tmplModalSessionType}
             <tbody class="tbody">
@@ -377,17 +370,14 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
                     @focusout=${ (e) => this._updateValueItem(e, serie.id, 'series')}>
                   </td>
                   <td @click=${ () => this._selectedItem(serie.id) }> ${this._tmplCheckItem(serie.checked)}</td>
+                  <td @click=${ () => this._deleteItem(serie.id) }>🗑️</td>
                 </tr>
                 `
               }) }
             </tbody>
           </table>
         </div>
-        <div class="footer">
-          <span class="button">
-            <button class="button-add" @click=${() => this._addNewItemSerie()}>+ Añadir serie</button>
-          </span>
-        </div>
+        ${this._tmplFooter}
       </div>
     `;
   }
@@ -434,9 +424,25 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
 
   }
 
-  _tmplCheckItem(checked) {
-    return checked ? html `<span style="font-size: 1.3rem; color: rgba(82, 255,51, 1);">☑</span>` :
-      html `<span style="font-size: 1.3rem; color: red;">☒</span>`
+  get _tmplHeaderTable() {
+    return html `
+      <tr class="thead">
+          <th>Session</th>
+          <th>Anterior</th>
+          <th>Kg</th>
+          <th>Series</th>
+          <th>✅</th>
+          <th>⚠️</th>
+      </tr>`
+  }
+
+  get _tmplFooter() {
+    return html `
+      <div class="footer">
+        <span class="button">
+          <button class="button-add" @click=${() => this._addNewItemSerie()}>+ Añadir serie</button>
+        </span>
+      </div>`
   }
 
   get _tmplModalMetrics() {
@@ -465,6 +471,21 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
     ` : nothing;
   }
 
+  get _tmplNotes() {
+    return this._showNotesExercice ? html `
+        <div class="header-note header-note-open ${ this._styleIconnote}">
+          <span class="header-note-description">
+            <input type="text" class="header-note-description-input" value=${this.noteExercicie} />
+          </span>
+          <span class="header-note-option" @click=${ () => this._openNote = !this._openNote} > ${ this._tmplIconNote } </span>
+        </div>` : nothing
+  }
+
+  _tmplCheckItem(checked) {
+    return checked ? html `<span style="font-size: 1.3rem; color: rgba(82, 255,51, 1);">☑</span>` :
+      html `<span style="font-size: 1.3rem; color: red;">☒</span>`
+  }
+
   _selectedItem(id) {
     this._seriesExercice.map(serie => {
       if (serie.id === id) {
@@ -481,14 +502,14 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
 
     let laterKg = 0;
     let laterSeries = 0;
-    console.table(onlyNumber)
+    // console.table(onlyNumber)
     if (onlyNumber.length >= 1) {
       laterKg = onlyNumber[onlyNumber.length - 1].kg;
       laterSeries = onlyNumber[onlyNumber.length - 1].series;
     }
 
     const newItem = {
-      id: this._seriesExercice.length,
+      id: this._generateUUID(),
       session: onlyNumber.length + 1,
       before: {},
       kg: laterKg,
@@ -496,10 +517,19 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       checked: false
     };
     this._seriesExercice.push(newItem);
+    // console.table(this._seriesExercice);
+    this.requestUpdate();
+  }
+
+  _deleteItem(id) {
+    console.log('>>>> _deleteItem')
+    this._seriesExercice = this._seriesExercice.filter(serie => serie.id !== id);
+    this._updateValueItem();
     this.requestUpdate();
   }
 
   _updateValueItem(ev, id, type) {
+    console.log('>>>> _updateValueItem')
     this._seriesExercice.map(serie => {
       if (serie.id === id) {
         if (type === 'kg') {
@@ -527,8 +557,8 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
     this.requestUpdate();
   }
 
-
   _updateMetrics() {
+    console.log('>>>> _updateMetrics')
     Object.entries(this.options).map(([key, value]) => {
       if (key === 'totalVolume') {
         const totalVolumen = this._seriesExercice
@@ -586,11 +616,12 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
         return value;
       }
     });
-    console.table(this.options)
+    // console.table(this.options)
     this._changeMetricActive();
   }
 
   _changeMetricActive() {
+    console.log('>>>> _changeMetricActive')
     Object.entries(this.options).map(([key, value]) => {
       if (key === this._metricSeleted) {
         this._metrics = value.value ? `${value.value} ${value.sufix}` : 'N/D';
@@ -600,15 +631,14 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       value.selected = false;
       return value;
     })
-    console.table(this.options)
+    // console.table(this.options)
     this.requestUpdate();
   }
 
   _selectItemSession(id) {
     this._itemSessionSelected = id;
-    console.log('_selectItemSession', this._itemSessionSelected)
+    // console.log('_selectItemSession', this._itemSessionSelected)
   }
-
 
   get _sessionType() {
     return {
