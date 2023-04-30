@@ -521,49 +521,60 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
 
   _updateMetrics() {
     Object.entries(this.options).map(([key, value]) => {
-      // console.log('key', key)
       if (key === 'totalVolume') {
         const totalVolumen = this._seriesExercice
           .filter(s => !isNaN(s.session))
           .filter(s => s.checked)
-          .map(s => s.kg)
+          .map(s => s.kg * s.series)
           .reduce((a, b) => a + b, 0);
-
-        return value.value = totalVolumen;
+        value.value = totalVolumen;
+        return value;
       }
       if (key === 'bulkingUp') {}
       if (key === 'totalRepetitions') {
-        // console.log('change values in totalRepetitions')
         const totalSeries = this._seriesExercice
           .filter(s => !isNaN(s.session))
           .filter(s => s.checked)
           .map(s => s.series)
           .reduce((a, b) => a + b, 0);
-
-        return value.value = totalSeries;
+        value.value = totalSeries;
+        return value;
+      }
+      if (key === 'rm') {
+        const numberOfSeries = this._seriesExercice
+          .filter(s => !isNaN(s.session))
+          .filter(s => s.checked)
+          .length
+        const totalVolumen = this._seriesExercice
+          .filter(s => !isNaN(s.session))
+          .filter(s => s.checked)
+          .map(s => s.kg)
+          .reduce((a, b) => a + b, 0);
+        const totalSeries = this._seriesExercice
+          .filter(s => !isNaN(s.session))
+          .filter(s => s.checked)
+          .map(s => s.series)
+          .reduce((a, b) => a + b, 0);
+        const totalVolumenMedia = totalVolumen / numberOfSeries;
+        const totalSeriesMedia = totalSeries / numberOfSeries;
+        // Peso levantado test / 1,0278-(0,0278x número de repeticiones hasta el fallo) 
+        const RM = totalVolumenMedia / (1.0278 - 0.0278 * totalSeriesMedia)
+        value.value = !isNaN(RM) ? RM.toFixed(2) : '';
+        return value;
       }
       if (key === 'weightPerRepetition') {
         const numberOfSeries = this._seriesExercice
           .filter(s => !isNaN(s.session))
           .filter(s => s.checked)
           .length
-
         const totalVolumen = this._seriesExercice
           .filter(s => !isNaN(s.session))
           .filter(s => s.checked)
           .map(s => s.kg)
           .reduce((a, b) => a + b, 0);
-
-        const totalSeries = this._seriesExercice
-          .filter(s => !isNaN(s.session))
-          .filter(s => s.checked)
-          .map(s => s.series)
-          .reduce((a, b) => a + b, 0);
-
-        // Peso levantado test / 1,0278-(0,0278x número de repeticiones hasta el fallo) 
-        const RM = totalVolumen / 1.0278 - (0.0278 * numberOfSeries)
-
-        return value.value = RM.toFixed(2);
+        const totalVolumenMedia = totalVolumen / numberOfSeries;
+        value.value = !isNaN(totalVolumenMedia) ? Math.round(totalVolumenMedia) : '';
+        return value;
       }
     });
     console.table(this.options)

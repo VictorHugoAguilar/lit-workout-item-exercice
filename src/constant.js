@@ -29,11 +29,21 @@ export const OPTION_MODAL_METRICS = {
     selected: false,
     active: true
   },
+  rm: {
+    description: 'RM',
+    attribute: 'rm',
+    prefix: '',
+    sufix: 'Kg',
+    optionalText: 'N/D',
+    value: '',
+    selected: false,
+    active: true
+  },
   weightPerRepetition: {
-    description: 'Peso/rep',
+    description: 'Peso/Rep',
     attribute: 'weightPerRepetition',
     prefix: '',
-    sufix: 'RM',
+    sufix: 'Kg',
     optionalText: 'N/D',
     value: '',
     selected: false,
