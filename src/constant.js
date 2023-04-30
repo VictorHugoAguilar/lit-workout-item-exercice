@@ -7,7 +7,7 @@ export const OPTION_MODAL_METRICS = {
     optionalText: 'N/D',
     value: '',
     selected: false,
-    active: false
+    active: true
   },
   bulkingUp: {
     description: 'Aumento de volumen',

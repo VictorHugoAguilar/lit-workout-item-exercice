@@ -39,7 +39,7 @@ class ModalInfo extends EventMixin(LitElement) {
       },
       itemSelected: {
         type: String,
-        attribute: 'selected-item'
+        attribute: 'item-selected'
       },
       stylesPrexis: {
         type: Object,
@@ -50,7 +50,7 @@ class ModalInfo extends EventMixin(LitElement) {
 
   constructor() {
     super();
-    this.itemSelected = 'totalVolume';
+    this.itemSelected = '';
     this.options = {};
     this.stylesPrexis = {
       weightPerRepetition: {
@@ -193,6 +193,8 @@ class ModalInfo extends EventMixin(LitElement) {
   }
 
   itemSelect(selected) {
+    console.log('selected => ', selected)
+    console.log('itemSelected => ', this.itemSelected)
     if (selected === this.itemSelected) {
       return html `<span class="modal-info-table-item-option-checked">✓</span>`;
     }
@@ -216,10 +218,12 @@ class ModalInfo extends EventMixin(LitElement) {
   }
 
   selected(itemSelected) {
+    console.log('itemSelected', itemSelected)
     if (!itemSelected) {
       return;
     }
     this.itemSelected = itemSelected;
+    console.log('itemSelected >>>', this.itemSelected)
     this.fire('modal-info-item-selected', {
       componentName: this.componentName,
       itemSelected: this.itemSelected
