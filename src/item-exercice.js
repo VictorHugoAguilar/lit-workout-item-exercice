@@ -44,7 +44,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       _openNote: {
         type: Boolean,
       },
-      _showModalInfo: {
+      _showModalMetrics: {
         type: Boolean,
       },
       _showModalTypeSerie: {
@@ -75,7 +75,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
     this.nameExercice = '';
     this._openNote = true;
     this.noteExercicie = 'Este ejercicio se hace en maquina';
-    this._showModalInfo = false;
+    this._showModalMetrics = false;
     this._showModalTypeSerie = false;
     this._seriesExercice = [{
         id: 0,
@@ -287,7 +287,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
         background-color: rgba(1, 1, 1, 0.6);
       }
 
-      .modal-info{
+      .modal-metrics{
         z-index: 99;
         display: block;
         left: -250px;
@@ -333,20 +333,14 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
   render() {
     return html `
       <div class="container">
-      ${ this._showModalInfo || this._showModalTypeSerie ? html`<div class="modal"></div>`: nothing }  
+      ${ this._showModalMetrics || this._showModalTypeSerie ? html`<div class="modal"></div>`: nothing }  
         <div class="header">
           <div class="title">
             <span>${this._normalizeText(this.nameExercice, 30, '...')}</span>
           </div>
           <div class="menu">
-            <modal-info class="modal-info" 
-              component-name="modal-info"
-              title-description="Establecer métricas de funcionamiento"
-              @modal-info-item-selected="${ (e) => this._selectdAndCloseModal(e) }"
-              ?modal-visible= ${this._showModalInfo}
-              .options=${this.options}
-              ></modal-info>
-            <span class="button-info" @click="${ () => this._openModal('modal-info') }" >${this._metrics}</span>
+            ${this._tmplModalMetrics}
+            <span class="button-info" @click="${ () => this._openModal('modal-metrics') }" >${this._metrics}</span>
             <span class="button-option">...</span>
           </div>
         </div>
@@ -398,18 +392,21 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
     `;
   }
 
-  _selectdAndCloseModal({
+  _selectdAndCloseModalMetrics({
     detail
   }) {
-    console.log('desde el main recibimos ', detail)
+    // console.log('desde el main recibimos _selectdAndCloseModalMetrics', detail)
     this._metricSeleted = detail.itemSelected ? detail.itemSelected : 'totalVolume';
+    // console.log('desde el main recibimos _selectdAndCloseModalMetrics >>>', this._metricSeleted)
     this._updateMetrics();
-    this._showModalInfo = false;
+    this._showModalMetrics = false;
   }
 
   _selectdAndCloseModalSerieType({
     detail
   }) {
+    // console.log('desde el main recibimos _selectdAndCloseModalSerieType', detail)
+
     if (detail.itemSelected) {
       const typeSelected = this._sessionType[detail.itemSelected];
       this._updateValueItem(typeSelected, this._itemSessionSelected, 'session');
@@ -419,11 +416,12 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
   }
 
   _openModal(modalName) {
+    // console.log(modalName)
     if (modalName === 'modal-type-serie') {
       this._showModalTypeSerie = !this._showModalTypeSerie
     }
-    if (modalName === 'modal-info') {
-      this._showModalInfo = !this._showModalInfo;
+    if (modalName === 'modal-metrics') {
+      this._showModalMetrics = !this._showModalMetrics;
     }
   }
 
@@ -441,6 +439,20 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       html `<span style="font-size: 1.3rem; color: red;">☒</span>`
   }
 
+  get _tmplModalMetrics() {
+    // console.table(this.options)
+    // console.log('this._metricSeleted', this._metricSeleted)
+    return this._showModalMetrics ? html `
+      <modal-info class="modal-metrics" 
+        component-name="modal-metrics"
+        title-description="Establecer métricas de funcionamiento"
+        @modal-info-item-selected="${ (e) => this._selectdAndCloseModalMetrics(e) }"
+        ?modal-visible= ${this._showModalMetrics}
+        .options=${this.options}
+        item-selected=${this._metricSeleted}
+      ></modal-info>` : nothing;
+  }
+
   get _tmplModalSessionType() {
     return this._showModalTypeSerie ? html `
       <modal-info class="modal-type-serie" 
@@ -449,7 +461,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
           @modal-info-item-selected="${ (e) => this._selectdAndCloseModalSerieType(e) }"
           ?modal-visible= ${this._showModalTypeSerie}
           .options=${this.optionsTypeSerie}
-        ></modal-info>
+      ></modal-info>
     ` : nothing;
   }
 
@@ -466,12 +478,21 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
 
   _addNewItemSerie() {
     const onlyNumber = this._seriesExercice.filter(serie => !isNaN(serie.session));
+
+    let laterKg = 0;
+    let laterSeries = 0;
+    console.table(onlyNumber)
+    if (onlyNumber.length >= 1) {
+      laterKg = onlyNumber[onlyNumber.length - 1].kg;
+      laterSeries = onlyNumber[onlyNumber.length - 1].series;
+    }
+
     const newItem = {
       id: this._seriesExercice.length,
       session: onlyNumber.length + 1,
       before: {},
-      kg: 0,
-      series: 0,
+      kg: laterKg,
+      series: laterSeries,
       checked: false
     };
     this._seriesExercice.push(newItem);
@@ -501,7 +522,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
         serie.session = ++increment;
         return serie;
       })
-    console.table(this._seriesExercice)
+    // console.table(this._seriesExercice)
     this._updateMetrics();
     this.requestUpdate();
   }
@@ -509,15 +530,14 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
 
   _updateMetrics() {
     Object.entries(this.options).map(([key, value]) => {
-      console.log('key', key)
       if (key === 'totalVolume') {
         const totalVolumen = this._seriesExercice
           .filter(s => !isNaN(s.session))
           .filter(s => s.checked)
-          .map(s => s.kg)
+          .map(s => s.kg * s.series)
           .reduce((a, b) => a + b, 0);
-
-        return value.value = totalVolumen;
+        value.value = totalVolumen;
+        return value;
       }
       if (key === 'bulkingUp') {}
       if (key === 'totalRepetitions') {
@@ -526,10 +546,45 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
           .filter(s => s.checked)
           .map(s => s.series)
           .reduce((a, b) => a + b, 0);
-
-        return value.value = totalSeries;
+        value.value = totalSeries;
+        return value;
       }
-      if (key === 'weightPerRepetition') {}
+      if (key === 'rm') {
+        const numberOfSeries = this._seriesExercice
+          .filter(s => !isNaN(s.session))
+          .filter(s => s.checked)
+          .length
+        const totalVolumen = this._seriesExercice
+          .filter(s => !isNaN(s.session))
+          .filter(s => s.checked)
+          .map(s => s.kg)
+          .reduce((a, b) => a + b, 0);
+        const totalSeries = this._seriesExercice
+          .filter(s => !isNaN(s.session))
+          .filter(s => s.checked)
+          .map(s => s.series)
+          .reduce((a, b) => a + b, 0);
+        const totalVolumenMedia = totalVolumen / numberOfSeries;
+        const totalSeriesMedia = totalSeries / numberOfSeries;
+        // Peso levantado test / 1,0278-(0,0278x número de repeticiones hasta el fallo) 
+        const RM = totalVolumenMedia / (1.0278 - 0.0278 * totalSeriesMedia)
+        value.value = !isNaN(RM) ? RM.toFixed(2) : '';
+        return value;
+      }
+      if (key === 'weightPerRepetition') {
+        const numberOfSeries = this._seriesExercice
+          .filter(s => !isNaN(s.session))
+          .filter(s => s.checked)
+          .length
+        const totalVolumen = this._seriesExercice
+          .filter(s => !isNaN(s.session))
+          .filter(s => s.checked)
+          .map(s => s.kg)
+          .reduce((a, b) => a + b, 0);
+        const totalVolumenMedia = totalVolumen / numberOfSeries;
+        value.value = !isNaN(totalVolumenMedia) ? Math.round(totalVolumenMedia) : '';
+        return value;
+      }
     });
     console.table(this.options)
     this._changeMetricActive();
@@ -539,10 +594,13 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
     Object.entries(this.options).map(([key, value]) => {
       if (key === this._metricSeleted) {
         this._metrics = value.value ? `${value.value} ${value.sufix}` : 'N/D';
-        return value.selected = true;
+        value.selected = true;
+        return value;
       }
-      return value.selected = false;
+      value.selected = false;
+      return value;
     })
+    console.table(this.options)
     this.requestUpdate();
   }
 

@@ -7,7 +7,7 @@ export const OPTION_MODAL_METRICS = {
     optionalText: 'N/D',
     value: '',
     selected: false,
-    active: false
+    active: true
   },
   bulkingUp: {
     description: 'Aumento de volumen',
@@ -29,11 +29,21 @@ export const OPTION_MODAL_METRICS = {
     selected: false,
     active: true
   },
+  rm: {
+    description: 'RM teorico',
+    attribute: 'rm',
+    prefix: '',
+    sufix: 'Kg',
+    optionalText: 'N/D',
+    value: '',
+    selected: false,
+    active: true
+  },
   weightPerRepetition: {
-    description: 'Peso/rep',
+    description: 'Peso/Rep',
     attribute: 'weightPerRepetition',
     prefix: '',
-    sufix: 'rep',
+    sufix: 'Kg',
     optionalText: 'N/D',
     value: '',
     selected: false,
