@@ -25,13 +25,17 @@ class ModalInfo extends EventMixin(LitElement) {
         type: String,
         attribute: 'component-name'
       },
+      titleDescription: {
+        type: String,
+        attribute: 'title-description'
+      },
       modalVisible: {
         type: Boolean,
         attribute: 'modal-visible',
       },
       options: {
         type: Object,
-        attribute: 'list-options'
+        attribute: 'options'
       },
       itemSelected: {
         type: String,
@@ -47,40 +51,7 @@ class ModalInfo extends EventMixin(LitElement) {
   constructor() {
     super();
     this.itemSelected = 'totalVolume';
-    this.options = {
-      totalVolume: {
-        description: 'Volumen total',
-        attribute: 'total-volume',
-        prefix: '',
-        sufix: 'Kg',
-        optionalText: 'N/D',
-        value: '',
-      },
-      bulkingUp: {
-        description: 'Aumento de volumen',
-        attribute: 'total-volume',
-        prefix: '',
-        sufix: '%',
-        optionalText: '-100%',
-        value: '',
-      },
-      totalRepetitions: {
-        description: 'Repeticiones totales',
-        attribute: 'total-volume',
-        prefix: '',
-        sufix: 'rep',
-        optionalText: 'N/D',
-        value: '',
-      },
-      weightPerRepetition: {
-        description: 'Peso/rep',
-        attribute: 'total-volume',
-        prefix: '',
-        sufix: 'rep',
-        optionalText: 'N/D',
-        value: '',
-      },
-    };
+    this.options = {};
     this.stylesPrexis = {
       weightPerRepetition: {
         color: 'red',
@@ -151,6 +122,11 @@ class ModalInfo extends EventMixin(LitElement) {
         padding: 5px;
       }
 
+      .modal-info-table-item:hover{
+        background-color: rgba(82, 255,51, 0.3);
+        border-bottom: 1px solid rgba(82, 255, 51, 1);
+      }
+
       .modal-info-table-item-prefix{
 
       }
@@ -181,7 +157,7 @@ class ModalInfo extends EventMixin(LitElement) {
    * to render into the element.
    */
   render() {
-    return this.modalVisible ? this._tplModal : nothing; 
+    return this.modalVisible ? this._tplModal : nothing;
   }
 
   get _tplModal() {
@@ -189,23 +165,25 @@ class ModalInfo extends EventMixin(LitElement) {
       <div class="container">
         <div class="modal-info">
           <div class="modal-info-header">
-            <span class="modal-title-description">
-              Establecer métricas de funcionamiento
+            <span class="modal-title-description"> ${this.titleDescription}
+              
             </span>
             <span class="modal-title-option"> ? </span>
           </div>
           <div class="modal-body">
             <table class="modal-info-table">
-            ${Object.entries(this.options).map(([key, value]) => { 
-              return html`
-                <tr class="modal-info-table-item ${this.styleSelected(key)}" @click=${ () => {this.selected(key)}}>
-                  ${value.prefix ? html`<td style="color: ${this.stylesPrefix(key)};"> ${value.prefix} </td>` : nothing}
-                  <td class="modal-info-table-item-description">${value.description}</td>
-                  <td class="modal-info-table-item-option"> 
-                    ${value.value ? `${value.value} ${value.sufix}` : value.optionalText } 
-                    ${this.itemSelect(key)}
-                  </td>
-                </tr>`
+            ${Object.entries(this.options).map(([key, value]) => {
+              if(value.active) {
+                return html`
+                  <tr class="modal-info-table-item ${this.styleSelected(key)}" @click=${ () => {this.selected(key)}}>
+                    ${value.prefix ? html`<td style="color: ${this.stylesPrefix(key)};"> ${value.prefix} </td>` : nothing}
+                    <td class="modal-info-table-item-description">${value.description}</td>
+                    <td class="modal-info-table-item-option"> 
+                      ${value.value ? `${value.value} ${value.sufix}` : value.optionalText } 
+                      ${this.itemSelect(key)}
+                    </td>
+                  </tr>`
+              }
             })}
             </table>
           </div>
