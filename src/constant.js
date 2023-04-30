@@ -52,6 +52,16 @@ export const OPTION_MODAL_SESSION_TYPE = {
     selected: false,
     active: true
   },
+  normal: {
+    description: 'Normal',
+    attribute: 'normal',
+    prefix: 'N',
+    sufix: '',
+    optionalText: '',
+    value: '',
+    selected: false,
+    active: true
+  },
   decreasing: {
     description: 'Serie Decreciente',
     attribute: 'decreasing',

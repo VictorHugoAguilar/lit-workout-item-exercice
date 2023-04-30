@@ -62,6 +62,9 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       },
       _metricSeleted: {
         type: String,
+      },
+      _itemSessionSelected: {
+        type: String,
       }
 
     }
@@ -111,6 +114,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
     this.optionsTypeSerie = OPTION_MODAL_SESSION_TYPE;
     this._metrics = 'N/D';
     this._metricSeleted = 'totalVolume';
+    this._itemSessionSelected = '';
 
   }
 
@@ -285,7 +289,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
 
       .modal-info{
         z-index: 99;
-        display: inline-block;
+        display: block;
         left: -250px;
         position: relative;
         border-radius: 10px;
@@ -296,12 +300,10 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
 
       .modal-type-serie{
         z-index: 99;
-        display: inline-block;
-        top: 20px;
+        display: block;
         left: 50px;
         position: relative;
         border-radius: 10px;
-        width: 300px;
         background-color: #5C5E6C;
         color: white;
       }
@@ -365,18 +367,12 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
                 <th>✅</th>
               </tr>
             </thead>
-            <modal-info class="modal-type-serie" 
-              component-name="modal-type-serie"
-              title-description="Establecer tipo de serie"
-              @modal-info-item-selected="${ (e) => this._selectdAndCloseModalSerieType(e) }"
-              ?modal-visible= ${this._showModalTypeSerie}
-              .options=${this.optionsTypeSerie}
-            ></modal-info>
+            ${this._tmplModalSessionType}
             <tbody class="tbody">
               ${ this._seriesExercice.map( serie => {
                 return html`
                 <tr class="table-item ${serie.checked ? 'table-item-select' : ''}">
-                  <td @click=${ () => this._openModal('modal-type-serie') } >${serie.session} </td>
+                  <td @click=${ () => {this._openModal('modal-type-serie'); this._selectItemSession(serie.id)} } >${serie.session} </td>
                   <td>${serie.before ? '' : ''}</td>
                   <td>
                     <input class="item-input" type="text" value="${serie.kg}" 
@@ -414,7 +410,11 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
   _selectdAndCloseModalSerieType({
     detail
   }) {
-    console.log('desde el main recibimos ', detail)
+    if (detail.itemSelected) {
+      const typeSelected = this._sessionType[detail.itemSelected];
+      this._updateValueItem(typeSelected, this._itemSessionSelected, 'session');
+    }
+    this._itemSessionSelected = '';
     this._showModalTypeSerie = false;
   }
 
@@ -439,6 +439,18 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
   _tmplCheckItem(checked) {
     return checked ? html `<span style="font-size: 1.3rem; color: rgba(82, 255,51, 1);">☑</span>` :
       html `<span style="font-size: 1.3rem; color: red;">☒</span>`
+  }
+
+  get _tmplModalSessionType() {
+    return this._showModalTypeSerie ? html `
+      <modal-info class="modal-type-serie" 
+          component-name="modal-type-serie"
+          title-description="Establecer tipo de serie"
+          @modal-info-item-selected="${ (e) => this._selectdAndCloseModalSerieType(e) }"
+          ?modal-visible= ${this._showModalTypeSerie}
+          .options=${this.optionsTypeSerie}
+        ></modal-info>
+    ` : nothing;
   }
 
   _selectedItem(id) {
@@ -475,9 +487,20 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
         if (type === 'series') {
           serie.series = Number(ev.target.value);
         }
+        if (type === 'session') {
+          serie.session = ev;
+        }
       }
       return serie;
     })
+    let increment = 0;
+    this._seriesExercice
+      .sort(serie => serie.id)
+      .filter(serie => !isNaN(serie.session))
+      .map(serie => {
+        serie.session = ++increment;
+        return serie;
+      })
     console.table(this._seriesExercice)
     this._updateMetrics();
     this.requestUpdate();
@@ -486,7 +509,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
 
   _updateMetrics() {
     Object.entries(this.options).map(([key, value]) => {
-      // console.log('key', key)
+      console.log('key', key)
       if (key === 'totalVolume') {
         const totalVolumen = this._seriesExercice
           .filter(s => !isNaN(s.session))
@@ -521,6 +544,21 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       return value.selected = false;
     })
     this.requestUpdate();
+  }
+
+  _selectItemSession(id) {
+    this._itemSessionSelected = id;
+    console.log('_selectItemSession', this._itemSessionSelected)
+  }
+
+
+  get _sessionType() {
+    return {
+      'heating': 'P',
+      'decreasing': 'S',
+      'error': 'E',
+      'normal': 0,
+    }
   }
 
 }
