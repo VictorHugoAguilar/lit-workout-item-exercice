@@ -44,6 +44,9 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       _openNote: {
         type: Boolean,
       },
+      _showNotesExercice: {
+        type: Boolean,
+      },
       _showModalMetrics: {
         type: Boolean,
       },
@@ -73,6 +76,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
   constructor() {
     super();
     this.nameExercice = '';
+    this._showNotesExercice = true;
     this._openNote = true;
     this.noteExercicie = 'Este ejercicio se hace en maquina';
     this._showModalMetrics = false;
@@ -344,12 +348,8 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
             <span class="button-option">...</span>
           </div>
         </div>
-        <div class="header-note header-note-open ${ this._styleIconnote}">
-          <span class="header-note-description">
-            <input type="text" class="header-note-description-input" value=${this.noteExercicie} />
-          </span>
-          <span class="header-note-option" @click=${ () => this._openNote = !this._openNote} > ${ this._tmplIconNote } </span>
-        </div>
+        <!-- Add notes -->
+        ${ this._tmplNotes }
         <div class="body">
           <table class="table">
             <thead>
@@ -465,6 +465,16 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
           .options=${this.optionsTypeSerie}
       ></modal-info>
     ` : nothing;
+  }
+
+  get _tmplNotes() {
+    return this._showNotesExercice ? html `
+        <div class="header-note header-note-open ${ this._styleIconnote}">
+          <span class="header-note-description">
+            <input type="text" class="header-note-description-input" value=${this.noteExercicie} />
+          </span>
+          <span class="header-note-option" @click=${ () => this._openNote = !this._openNote} > ${ this._tmplIconNote } </span>
+        </div>` : nothing
   }
 
   _selectedItem(id) {
