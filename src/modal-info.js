@@ -172,16 +172,18 @@ class ModalInfo extends EventMixin(LitElement) {
           </div>
           <div class="modal-body">
             <table class="modal-info-table">
-            ${Object.entries(this.options).map(([key, value]) => { 
-              return html`
-                <tr class="modal-info-table-item ${this.styleSelected(key)}" @click=${ () => {this.selected(key)}}>
-                  ${value.prefix ? html`<td style="color: ${this.stylesPrefix(key)};"> ${value.prefix} </td>` : nothing}
-                  <td class="modal-info-table-item-description">${value.description}</td>
-                  <td class="modal-info-table-item-option"> 
-                    ${value.value ? `${value.value} ${value.sufix}` : value.optionalText } 
-                    ${this.itemSelect(key)}
-                  </td>
-                </tr>`
+            ${Object.entries(this.options).map(([key, value]) => {
+              if(value.active) {
+                return html`
+                  <tr class="modal-info-table-item ${this.styleSelected(key)}" @click=${ () => {this.selected(key)}}>
+                    ${value.prefix ? html`<td style="color: ${this.stylesPrefix(key)};"> ${value.prefix} </td>` : nothing}
+                    <td class="modal-info-table-item-description">${value.description}</td>
+                    <td class="modal-info-table-item-option"> 
+                      ${value.value ? `${value.value} ${value.sufix}` : value.optionalText } 
+                      ${this.itemSelect(key)}
+                    </td>
+                  </tr>`
+              }
             })}
             </table>
           </div>

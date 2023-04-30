@@ -109,7 +109,8 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
           sufix: 'Kg',
           optionalText: 'N/D',
           value: '',
-          selected: false
+          selected: false,
+          active: false
         },
         bulkingUp: {
           description: 'Aumento de volumen',
@@ -118,7 +119,8 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
           sufix: '%',
           optionalText: '-100%',
           value: '',
-          selected: false
+          selected: false,
+          active: false
         },
         totalRepetitions: {
           description: 'Repeticiones totales',
@@ -127,7 +129,8 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
           sufix: 'rep',
           optionalText: 'N/D',
           value: '',
-          selected: false
+          selected: false,
+          active: true
         },
         weightPerRepetition: {
           description: 'Peso/rep',
@@ -136,7 +139,8 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
           sufix: 'rep',
           optionalText: 'N/D',
           value: '',
-          selected: false
+          selected: false,
+          active: true
         },
       },
 
@@ -148,7 +152,8 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
           sufix: '',
           optionalText: '',
           value: '',
-          selected: false
+          selected: false,
+          active: true
         },
         decreasing: {
           description: 'Serie Decreciente',
@@ -157,7 +162,8 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
           sufix: '',
           optionalText: '',
           value: '',
-          selected: false
+          selected: false,
+          active: true
         },
         error: {
           description: 'Error',
@@ -166,7 +172,8 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
           sufix: '',
           optionalText: '',
           value: '',
-          selected: false
+          selected: false,
+          active: true
         },
       },
 
