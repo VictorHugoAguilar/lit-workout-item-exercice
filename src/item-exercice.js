@@ -490,7 +490,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
     }
 
     const newItem = {
-      id: this._seriesExercice.length,
+      id: this._generateUUID(),
       session: onlyNumber.length + 1,
       before: {},
       kg: laterKg,
@@ -498,15 +498,19 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
       checked: false
     };
     this._seriesExercice.push(newItem);
+    // console.table(this._seriesExercice);
     this.requestUpdate();
   }
 
   _deleteItem(id) {
-    this._seriesExercice = this._seriesExercice.filter(serie => serie.id !== id)
+    console.log('>>>> _deleteItem')
+    this._seriesExercice = this._seriesExercice.filter(serie => serie.id !== id);
+    this._updateValueItem();
     this.requestUpdate();
   }
 
   _updateValueItem(ev, id, type) {
+    console.log('>>>> _updateValueItem')
     this._seriesExercice.map(serie => {
       if (serie.id === id) {
         if (type === 'kg') {
@@ -536,6 +540,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
 
 
   _updateMetrics() {
+    console.log('>>>> _updateMetrics')
     Object.entries(this.options).map(([key, value]) => {
       if (key === 'totalVolume') {
         const totalVolumen = this._seriesExercice
@@ -598,6 +603,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
   }
 
   _changeMetricActive() {
+    console.log('>>>> _changeMetricActive')
     Object.entries(this.options).map(([key, value]) => {
       if (key === this._metricSeleted) {
         this._metrics = value.value ? `${value.value} ${value.sufix}` : 'N/D';
@@ -615,10 +621,6 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
     this._itemSessionSelected = id;
     // console.log('_selectItemSession', this._itemSessionSelected)
   }
-
-
-
-
 
   get _sessionType() {
     return {
