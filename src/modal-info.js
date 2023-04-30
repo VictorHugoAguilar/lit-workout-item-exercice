@@ -193,8 +193,8 @@ class ModalInfo extends EventMixin(LitElement) {
   }
 
   itemSelect(selected) {
-    console.log('selected => ', selected)
-    console.log('itemSelected => ', this.itemSelected)
+    // console.log('selected => ', selected)
+    // console.log('itemSelected => ', this.itemSelected)
     if (selected === this.itemSelected) {
       return html `<span class="modal-info-table-item-option-checked">✓</span>`;
     }
@@ -218,12 +218,12 @@ class ModalInfo extends EventMixin(LitElement) {
   }
 
   selected(itemSelected) {
-    console.log('itemSelected', itemSelected)
+    /* console.log('itemSelected', itemSelected) */
     if (!itemSelected) {
       return;
     }
     this.itemSelected = itemSelected;
-    console.log('itemSelected >>>', this.itemSelected)
+    /* console.log('itemSelected >>>', this.itemSelected) */
     this.fire('modal-info-item-selected', {
       componentName: this.componentName,
       itemSelected: this.itemSelected

@@ -33,7 +33,7 @@ export const OPTION_MODAL_METRICS = {
     description: 'Peso/rep',
     attribute: 'weightPerRepetition',
     prefix: '',
-    sufix: 'rep',
+    sufix: 'RM',
     optionalText: 'N/D',
     value: '',
     selected: false,

@@ -397,7 +397,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
   }) {
     // console.log('desde el main recibimos _selectdAndCloseModalMetrics', detail)
     this._metricSeleted = detail.itemSelected ? detail.itemSelected : 'totalVolume';
-    console.log('desde el main recibimos _selectdAndCloseModalMetrics >>>', this._metricSeleted)
+    // console.log('desde el main recibimos _selectdAndCloseModalMetrics >>>', this._metricSeleted)
     this._updateMetrics();
     this._showModalMetrics = false;
   }
@@ -542,9 +542,31 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
 
         return value.value = totalSeries;
       }
-      if (key === 'weightPerRepetition') {}
+      if (key === 'weightPerRepetition') {
+        const numberOfSeries = this._seriesExercice
+          .filter(s => !isNaN(s.session))
+          .filter(s => s.checked)
+          .length
+
+        const totalVolumen = this._seriesExercice
+          .filter(s => !isNaN(s.session))
+          .filter(s => s.checked)
+          .map(s => s.kg)
+          .reduce((a, b) => a + b, 0);
+
+        const totalSeries = this._seriesExercice
+          .filter(s => !isNaN(s.session))
+          .filter(s => s.checked)
+          .map(s => s.series)
+          .reduce((a, b) => a + b, 0);
+
+        // Peso levantado test / 1,0278-(0,0278x número de repeticiones hasta el fallo) 
+        const RM = totalVolumen / 1.0278 - (0.0278 * numberOfSeries)
+
+        return value.value = RM.toFixed(2);
+      }
     });
-    // console.table(this.options)
+    console.table(this.options)
     this._changeMetricActive();
   }
 
