@@ -478,12 +478,21 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
 
   _addNewItemSerie() {
     const onlyNumber = this._seriesExercice.filter(serie => !isNaN(serie.session));
+
+    let laterKg = 0;
+    let laterSeries = 0;
+    console.table(onlyNumber)
+    if (onlyNumber.length >= 1) {
+      laterKg = onlyNumber[onlyNumber.length - 1].kg;
+      laterSeries = onlyNumber[onlyNumber.length - 1].series;
+    }
+
     const newItem = {
       id: this._seriesExercice.length,
       session: onlyNumber.length + 1,
       before: {},
-      kg: 0,
-      series: 0,
+      kg: laterKg,
+      series: laterSeries,
       checked: false
     };
     this._seriesExercice.push(newItem);
@@ -513,7 +522,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
         serie.session = ++increment;
         return serie;
       })
-    console.table(this._seriesExercice)
+    // console.table(this._seriesExercice)
     this._updateMetrics();
     this.requestUpdate();
   }

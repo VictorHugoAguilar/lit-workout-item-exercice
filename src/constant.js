@@ -30,7 +30,7 @@ export const OPTION_MODAL_METRICS = {
     active: true
   },
   rm: {
-    description: 'RM',
+    description: 'RM teorico',
     attribute: 'rm',
     prefix: '',
     sufix: 'Kg',
