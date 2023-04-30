@@ -11,6 +11,12 @@ import {
 import {
   NormalizeMixin,
 } from './mixins/NormalizeMixin.js';
+
+import {
+  OPTION_MODAL_METRICS,
+  OPTION_MODAL_SESSION_TYPE
+} from "./constant.js";
+
 /**
  * `ItemExercice` Description
  *
@@ -101,83 +107,9 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
         checked: false
       },
     ];
-    this.options = {
-        totalVolume: {
-          description: 'Volumen total',
-          attribute: 'totalVolume',
-          prefix: '',
-          sufix: 'Kg',
-          optionalText: 'N/D',
-          value: '',
-          selected: false,
-          active: false
-        },
-        bulkingUp: {
-          description: 'Aumento de volumen',
-          attribute: 'bulkingUp',
-          prefix: '',
-          sufix: '%',
-          optionalText: '-100%',
-          value: '',
-          selected: false,
-          active: false
-        },
-        totalRepetitions: {
-          description: 'Repeticiones totales',
-          attribute: 'totalRepetitions',
-          prefix: '',
-          sufix: 'rep',
-          optionalText: 'N/D',
-          value: '',
-          selected: false,
-          active: true
-        },
-        weightPerRepetition: {
-          description: 'Peso/rep',
-          attribute: 'weightPerRepetition',
-          prefix: '',
-          sufix: 'rep',
-          optionalText: 'N/D',
-          value: '',
-          selected: false,
-          active: true
-        },
-      },
-
-      this.optionsTypeSerie = {
-        heating: {
-          description: 'Calentamiento',
-          attribute: 'heating',
-          prefix: 'P',
-          sufix: '',
-          optionalText: '',
-          value: '',
-          selected: false,
-          active: true
-        },
-        decreasing: {
-          description: 'Serie Decreciente',
-          attribute: 'decreasing',
-          prefix: 'S',
-          sufix: '',
-          optionalText: '',
-          value: '',
-          selected: false,
-          active: true
-        },
-        error: {
-          description: 'Error',
-          attribute: 'error',
-          prefix: 'E',
-          sufix: '',
-          optionalText: '',
-          value: '',
-          selected: false,
-          active: true
-        },
-      },
-
-      this._metrics = 'N/D';
+    this.options = OPTION_MODAL_METRICS;
+    this.optionsTypeSerie = OPTION_MODAL_SESSION_TYPE;
+    this._metrics = 'N/D';
     this._metricSeleted = 'totalVolume';
 
   }
@@ -412,7 +344,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
               ?modal-visible= ${this._showModalInfo}
               .options=${this.options}
               ></modal-info>
-            <span class="button-info" @click="${ () => this._openModal() }" >${this._metrics}</span>
+            <span class="button-info" @click="${ () => this._openModal('modal-info') }" >${this._metrics}</span>
             <span class="button-option">...</span>
           </div>
         </div>
@@ -444,7 +376,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
               ${ this._seriesExercice.map( serie => {
                 return html`
                 <tr class="table-item ${serie.checked ? 'table-item-select' : ''}">
-                  <td @click=${ () => this._showModalTypeSerie = !this._showModalTypeSerie } >${serie.session} </td>
+                  <td @click=${ () => this._openModal('modal-type-serie') } >${serie.session} </td>
                   <td>${serie.before ? '' : ''}</td>
                   <td>
                     <input class="item-input" type="text" value="${serie.kg}" 
@@ -487,7 +419,12 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
   }
 
   _openModal(modalName) {
-    this._showModalInfo = true;
+    if (modalName === 'modal-type-serie') {
+      this._showModalTypeSerie = !this._showModalTypeSerie
+    }
+    if (modalName === 'modal-info') {
+      this._showModalInfo = !this._showModalInfo;
+    }
   }
 
   get _tmplIconNote() {
