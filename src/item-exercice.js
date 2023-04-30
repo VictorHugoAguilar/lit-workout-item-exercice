@@ -337,7 +337,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
   render() {
     return html `
       <div class="container">
-      ${ this._showModalMetrics || this._showModalTypeSerie ? html`<div class="modal"></div>`: nothing }  
+        ${ this._showModalMetrics || this._showModalTypeSerie ? html`<div class="modal"></div>`: nothing }  
         <div class="header">
           <div class="title">
             <span>${this._normalizeText(this.nameExercice, 30, '...')}</span>
@@ -352,15 +352,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
         ${ this._tmplNotes }
         <div class="body">
           <table class="table">
-            <thead>
-              <tr class="thead">
-                <th>Session</th>
-                <th>Anterior</th>
-                <th>Kg</th>
-                <th>Series</th>
-                <th>✅</th>
-                <th>⚠️</th>
-              </tr>
+            ${this._tmplHeaderTable}
             </thead>
             ${this._tmplModalSessionType}
             <tbody class="tbody">
@@ -385,11 +377,7 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
             </tbody>
           </table>
         </div>
-        <div class="footer">
-          <span class="button">
-            <button class="button-add" @click=${() => this._addNewItemSerie()}>+ Añadir serie</button>
-          </span>
-        </div>
+        ${this._tmplFooter}
       </div>
     `;
   }
@@ -439,6 +427,27 @@ class ItemExercice extends EventMixin(NormalizeMixin(LitElement)) {
   _tmplCheckItem(checked) {
     return checked ? html `<span style="font-size: 1.3rem; color: rgba(82, 255,51, 1);">☑</span>` :
       html `<span style="font-size: 1.3rem; color: red;">☒</span>`
+  }
+
+  get _tmplHeaderTable() {
+    return html `
+      <tr class="thead">
+          <th>Session</th>
+          <th>Anterior</th>
+          <th>Kg</th>
+          <th>Series</th>
+          <th>✅</th>
+          <th>⚠️</th>
+      </tr>`
+  }
+
+  get _tmplFooter() {
+    return html `
+      <div class="footer">
+        <span class="button">
+          <button class="button-add" @click=${() => this._addNewItemSerie()}>+ Añadir serie</button>
+        </span>
+      </div>`
   }
 
   get _tmplModalMetrics() {
